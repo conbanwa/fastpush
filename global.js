@@ -18,7 +18,7 @@
   if (typeof module !== 'undefined') {
     $module = module
   }
-  require('./src/utils/gofmt')
+  require('./utils/gofmt')
   const fs = require('fs')
   const process = require('child_process')
   $global.cmd = function (
