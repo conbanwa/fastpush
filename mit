@@ -1,0 +1,36 @@
+#!/usr/local/bin/node
+// node C:\Users\Administrator\cmd\mit
+'use strict'
+require('./global')
+let main = file2string('./main.go')
+let versionReg = /\/\/ @version\s+\d+\.\d+\.\d+/
+let vMatch = main.match(versionReg)
+let version = ''
+if (vMatch) {
+  let versionLine = vMatch[0].split(' ')
+  let oldVersion = versionLine[versionLine.length - 1]
+  let versionArray = oldVersion.split('.')
+  if (versionArray[2] == '9') {
+    versionArray[2] = '0'
+    versionArray[1] = parseInt(versionArray[1]) + 1
+  } else versionArray[2] = parseInt(versionArray[2]) + 1
+  version = versionArray.join('.')
+  main = main.replace(versionReg, '// @version ' + version)
+  let date = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString()
+  let dateReg = /\/\/ @license.name\s+last updated at.*/
+  main = main.replace(dateReg, '// @license.name last updated at ' + date)
+  string2file('./main.go', main)
+}
+let argv = process.argv
+z(argv)
+let m = argv.slice(2).join(' ')
+if (!m) m = 'version:' + version
+let tag = ''
+if (vMatch) tag = ' &&git tag v' + version
+cmd('git add .&&git commit -m "' + m + '" --signoff' + tag + '&&git push', (error, stdout, stderr) => {
+  if (!error) {
+    z(stdout, stderr)
+  } else {
+    z({ error, stderr })
+  }
+})
