@@ -2,7 +2,8 @@
 // node C:\Users\Administrator\cmd\mit
 'use strict'
 require('./global')
-let main = file2string('./main.go')
+let verFile='./main.go'
+let main = file2string(verFile)
 let versionReg = /\/\/ @version\s+\d+\.\d+\.\d+/
 let vMatch = main.match(versionReg)
 let version = ''
@@ -19,7 +20,7 @@ if (vMatch) {
   let date = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString()
   let dateReg = /\/\/ @license.name\s+last updated at.*/
   main = main.replace(dateReg, '// @license.name last updated at ' + date)
-  string2file('./main.go', main)
+  string2file(verFile, main)
 }
 let argv = process.argv
 z(argv)
